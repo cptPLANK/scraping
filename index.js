@@ -7,20 +7,20 @@ const fs = require('fs');
 /////////////////////////////////////////////////////////////////////////
 ////////// NUR HIER EINTRAGEN ///////////////////////////////////////////
 
-let suchWort = 'aerzte'; // <---- Suchwort ///////////////////////////////
-let ort = 'soest';      // <---- Ort ////////////////////////////////////
+const suchWort = 'aerzte'; // <---- Suchwort ///////////////////////////////
+const ort = 'soest';      // <---- Ort ////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 
-let url = `https://www.dasoertliche.de/?zvo_ok=0&choose=true&page=0&context=0&action=43&buc=675&topKw=0&form_name=search_nat&kw=${suchWort}&ci=${ort}`;
+const url = `https://www.dasoertliche.de/?zvo_ok=0&choose=true&page=0&context=0&action=43&buc=675&topKw=0&form_name=search_nat&kw=${suchWort}&ci=${ort}`;
 let arr = [];
 let notLastPage = true;
 
 const getData = async () => {
-    let pageData = await axios.get(url);
-    let $ = cheerio.load(pageData.data);
+    const pageData = await axios.get(url);
+    const $ = cheerio.load(pageData.data);
     $('.counter').each((el) => {
         let startEl = '#entry_' + (el + 1);
         let pullData = {
@@ -35,7 +35,7 @@ const getData = async () => {
         };
         arr.push(pullData);
     });
-    let paginationPath = '#myIframe > div.paging > span:last-of-type > a';
+    const paginationPath = '#myIframe > div.paging > span:last-of-type > a';
     $(paginationPath).attr('title') === 'zur nächsten Seite' ? notLastPage = true : notLastPage = false;
     url = $(paginationPath).attr('href');
 };
@@ -45,7 +45,7 @@ const getData = async () => {
         while (notLastPage) {
             await getData();
         }
-        let json = JSON.stringify(arr);
+        const json = JSON.stringify(arr);
         fs.writeFile(`${__dirname}/${suchWort}-${ort}-liste.json`, json, err => {
             if (err) throw err;
             console.log('File saved!');
